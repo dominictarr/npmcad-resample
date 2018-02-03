@@ -4,7 +4,7 @@ take a line (an array of vertices) and return a resampled at fixed steps along t
 
 ## visualize
 
-[!example.png](./example.png)
+![example.png](./example.png)
 
 The grey curve is generated with [cardinal-spline-js](http://npm.im/cardinal-spline-js),
 the blue lines point to output of `resample.steps` and the green shows a `resample.along` line.
