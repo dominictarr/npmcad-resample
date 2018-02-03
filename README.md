@@ -24,22 +24,10 @@ the mountains can have steep cliffs but not fully vertical or caves or overhangs
 
 ## resample.along (points, size)
 
-resample a curve at fixed size steps along it's own length.
-
+resample a curve at fixed size steps along it's own length. in this case,
+overhangs and caves are supported.
 
 ## License
 
 MIT
-
-
-
-
-
-
-
-
-
-
-
-
 
