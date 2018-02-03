@@ -3,7 +3,7 @@ var test = require('tape')
 var resample = require('../')
 
 function toAry(point) {
-  return Array.isArray(point) ? point : [point.x, point.y,point.z]
+  return Array.isArray(point) ? point : [point.x,point.y,point.z]
 }
 
 var points = [
@@ -14,7 +14,7 @@ var points = [
 
 test ('linear', function (t) {
   t.deepEqual(
-    resample([points[0], points[1]], {x:2, y:0, z: 0}).map(toAry),
+    resample.steps([points[0], points[1]], {x:2, y:0, z: 0}).map(toAry),
     [
       [0, 0, 0],
       [2, 4, 0],
@@ -28,7 +28,7 @@ test ('linear', function (t) {
 
 test ('linear2', function (t) {
   t.deepEqual(
-    resample(points, {x:2, y:0, z: 0}).map(toAry),
+    resample.steps(points, {x:2, y:0, z: 0}).map(toAry),
     [
       [0, 0, 0],
       [2, 4, 0],
@@ -48,13 +48,12 @@ test('length', function (t) {
 })
 
 test('along', function (t) {
-  return t.end()
   var tl = resample.totalLength(points)
-  var step = tl/20
+  var step = tl/40
   var resampled = resample.along(points, step)
-  console.log(resampled.map(toAry))
+  console.log('resampled', resampled.map(toAry))
   var l = resample.totalLength(resampled)
-  console.log(resample.totalLength(resampled))
+  console.log(tl, resample.totalLength(resampled))
   t.ok(l < tl*1.01)
   t.ok(l > tl*0.99)
 
@@ -75,7 +74,7 @@ var points = [
 ]
 
   t.deepEqual(
-    resample(points, {x:2, y:0, z: 0}).map(toAry),
+    resample.steps(points, {x:2, y:0, z: 0}).map(toAry),
     [
       [0, 0, 0],
       [2, 4, 0],
@@ -90,7 +89,6 @@ var points = [
 })
 
 
-return
 test('steps, with some way shorter links', function (t) {
 
   var points = [
@@ -100,13 +98,15 @@ test('steps, with some way shorter links', function (t) {
   ]
 
   t.deepEqual(
-    resample(points, {x:2, y:0, z: 0}).map(toAry),
-    [
-    ]
+    resample.steps(points, {x:2, y:0, z: 0}).map(toAry),
+    [ [ 0, 0, 0 ], [ 2, 1.3333333333333333, 0 ], [ 4, 0, 0 ] ]
   )
   t.end()
 
 })
+
+
+
 
 
 
