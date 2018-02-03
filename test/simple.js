@@ -14,7 +14,7 @@ var points = [
 
 test ('linear', function (t) {
   t.deepEqual(
-    resample.segment(points[0], points[1], {x:2, y:0, z: 0}).map(toAry),
+    resample([points[0], points[1]], {x:2, y:0, z: 0}).map(toAry),
     [
       [0, 0, 0],
       [2, 4, 0],
@@ -42,13 +42,13 @@ test ('linear2', function (t) {
   t.end()
 })
 
-
 test('length', function (t) {
   console.log(resample.totalLength(points))
   t.end()
 })
 
 test('along', function (t) {
+  return t.end()
   var tl = resample.totalLength(points)
   var step = tl/20
   var resampled = resample.along(points, step)
@@ -60,4 +60,56 @@ test('along', function (t) {
 
   t.end()
 })
+
+test('steps, with some way shorter links', function (t) {
+
+var points = [
+  {x: 0, y: 0, z: 0},
+  {x: 6, y: 12, z: 0},
+  {x: 6.2, y: 12, z: 0},
+  {x: 6.4, y: 12, z: 0},
+  {x: 6.6, y: 12, z: 0},
+  {x: 6.8, y: 12, z: 0},
+  {x: 7, y: 12, z: 0},
+  {x: 10, y: 6, z: 0}
+]
+
+  t.deepEqual(
+    resample(points, {x:2, y:0, z: 0}).map(toAry),
+    [
+      [0, 0, 0],
+      [2, 4, 0],
+      [4, 8, 0],
+      [6, 12, 0],
+      [8, 10, 0],
+      [10, 6, 0]
+    ]
+  )
+  t.end()
+
+})
+
+
+return
+test('steps, with some way shorter links', function (t) {
+
+  var points = [
+    {x: 0, y: 0, z: 0},
+    {x: 1, y: 2, z: 0},
+    {x: 4, y: 0, z: 0},
+  ]
+
+  t.deepEqual(
+    resample(points, {x:2, y:0, z: 0}).map(toAry),
+    [
+    ]
+  )
+  t.end()
+
+})
+
+
+
+
+
 
