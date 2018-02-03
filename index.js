@@ -1,3 +1,6 @@
+// run with electro example.js
+// npm install electro -g
+
 var csg = require('@jscad/csg').CSG
 
 function toAry(point) {
@@ -19,13 +22,7 @@ function _between(x, a, b) {
 }
 
 function between (x, a, b) {
-  if(!(_between(x.x,a.x,b.x) && _between(x.y,a.y,b.y) && _between(x.z,a.z,b.z))) {
-    console.log([x, a, b].map(toAry).map(function (e) {
-      return e.join(',')
-    }))
-  return false
-  }
-  return true
+  return _between(x.x,a.x,b.x) && _between(x.y,a.y,b.y) && _between(x.z,a.z,b.z)
 }
 
 //stepping along a vector
@@ -62,19 +59,27 @@ function totalLength (points) {
 
 //stepping along the line, with fixed size
 function along (points, size) {
-  var output = [], leftover = 0
+  points = points.map(function (e) {
+    return new csg.Vector3D(e)
+  })
+  var output = [points[0]]
+  var start = points[0], i = 1, dir, left = size
 
-  return pairs(points, function (output, a, b) {
-    //get direction and
-    var vec = new csg.Vector3D(b).minus(new csg.Vector3D(a))
-    var dir = vec.unit()
-    segment(a, b, dir.times(size), new csg.Vector3D(a).plus(dir.times(leftover)), append, output)
-    leftover = segment.point.distanceTo(new csg.Vector3D(b))
-    return output
-  }, [])
+  while(i < points.length) {
+    var l = start.distanceTo(points[i])
+    if(l < left) {
+      start = points[i]
+      i++
+      left -= l
+    } else if(l > left) {
+      output.push(start = start.plus(points[i].minus(start).unit().times(l)))
+      left = size
+    }
+  }
+  return output
 }
 
-module.exports = steps
-module.exports.along = along
-module.exports.totalLength = totalLength
+exports.steps = steps
+exports.along = along
+exports.totalLength = totalLength
 
