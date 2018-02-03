@@ -11,6 +11,7 @@
     "@jscad/csg": "^0.3.7"
   },
   "devDependencies": {
+    "cardinal-spline-js": "^2.3.6",
     "tape": "^4.8.0"
   },
   "scripts": {
