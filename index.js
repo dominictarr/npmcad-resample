@@ -28,18 +28,6 @@ function between (x, a, b) {
   return true
 }
 
-function intersections(points, plane) {
-  for(var i = 1; i < points.length; i++) {
-    var a = new csg.Vector3D(points[i-1])
-    var b = new csg.Vector3D(points[i])
-    var line = csg.Line3D.fromPoints(a, b)
-    var p = line.intersectWithPlane(plane)
-    console.log('between?', p, a, b, plane, between( p, a, b))
-    if(between(p, a, b))
-      return p
-  }
-}
-
 //stepping along a vector
 function steps (points, step) {
   var output = []
@@ -52,20 +40,14 @@ function steps (points, step) {
   var i = 1
   do {
     var plane = new csg.Plane.fromNormalAndPoint(step, start)
-    for(; i < points.length;) {
+    x = null
+    while(!x && i < points.length) {
       var a = points[i-1], b=points[i]
       var line = csg.Line3D.fromPoints(a, b)
       var p = line.intersectWithPlane(plane)
-      console.log('p', p, start)
-      if(between(p, a, b)) {
-        x = p
-        break;
-      }
-      else
-        i++
+      if(between(p, a, b)) output.push(x = p)
+      else i++
     }
-    console.log(i, points.length, start)
-    output.push(x)
     start = start.plus(step)
   } while (x && i < points.length)
 
@@ -95,12 +77,4 @@ function along (points, size) {
 module.exports = steps
 module.exports.along = along
 module.exports.totalLength = totalLength
-
-
-
-
-
-
-
-
 
