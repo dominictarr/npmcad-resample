@@ -14,40 +14,62 @@ function pairs (points, iter, acc) {
   return acc
 }
 
-function segment (a, b, step, start, reduce, acc) {
-  if(!reduce) reduce = append
-  if(!acc) acc = []
+function _between(x, a, b) {
+  return x <= Math.max(a, b) && x >= Math.min(a, b)
+}
 
-  step = new csg.Vector3D(step)
-  a = new csg.Vector3D(a)
-  b = new csg.Vector3D(b)
-
-  start = new csg.Vector3D(start || a)
-  var p = start
-  var _p = start
-
-  var line = csg.Line3D.fromPoints(a, b)
-
-  while(_p.plus(step).minus(b).dot(step) <= 0) {
-    _p = line.intersectWithPlane(
-      new csg.Plane.fromNormalAndPoint(step, p)
-    )
-    acc = reduce(acc, _p)
-    p = p.plus(step)
+function between (x, a, b) {
+  if(!(_between(x.x,a.x,b.x) && _between(x.y,a.y,b.y) && _between(x.z,a.z,b.z))) {
+    console.log([x, a, b].map(toAry).map(function (e) {
+      return e.join(',')
+    }))
+  return false
   }
-  segment.point = p
-  return acc
+  return true
+}
+
+function intersections(points, plane) {
+  for(var i = 1; i < points.length; i++) {
+    var a = new csg.Vector3D(points[i-1])
+    var b = new csg.Vector3D(points[i])
+    var line = csg.Line3D.fromPoints(a, b)
+    var p = line.intersectWithPlane(plane)
+    console.log('between?', p, a, b, plane, between( p, a, b))
+    if(between(p, a, b))
+      return p
+  }
 }
 
 //stepping along a vector
 function steps (points, step) {
   var output = []
-  var start = points[0]
-  return pairs(points, function (output, a, b) {
-    segment(a, b, step, start, null, output)
-    start = segment.point
-    return output
-  }, [])
+  step = new csg.Vector3D(step)
+  points = points.map(function (e) {
+    return new csg.Vector3D(e)
+  })
+  var start = points[0], x
+
+  var i = 1
+  do {
+    var plane = new csg.Plane.fromNormalAndPoint(step, start)
+    for(; i < points.length;) {
+      var a = points[i-1], b=points[i]
+      var line = csg.Line3D.fromPoints(a, b)
+      var p = line.intersectWithPlane(plane)
+      console.log('p', p, start)
+      if(between(p, a, b)) {
+        x = p
+        break;
+      }
+      else
+        i++
+    }
+    console.log(i, points.length, start)
+    output.push(x)
+    start = start.plus(step)
+  } while (x && i < points.length)
+
+  return output
 }
 
 function totalLength (points) {
@@ -71,9 +93,14 @@ function along (points, size) {
 }
 
 module.exports = steps
-module.exports.segment = segment
 module.exports.along = along
 module.exports.totalLength = totalLength
+
+
+
+
+
+
 
 
 
